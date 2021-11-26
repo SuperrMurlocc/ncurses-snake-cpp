@@ -11,7 +11,7 @@ class PointStack {
         int size;
 
         void increase_stack_size() {
-            CPoint * temp = new CPoint[2 * this->size];
+            auto * temp = new CPoint[2 * this->size];
             this->size *= 2;
             memcpy(temp, this->stack, this->top * sizeof(CPoint));
             delete[] this->stack;
@@ -20,7 +20,7 @@ class PointStack {
     public:
         // constructor
         PointStack() {
-            this->stack = new CPoint[STARTING_STACK_SIZE];
+            this->stack = new CPoint [STARTING_STACK_SIZE];
             this->top = 0;
             this->size = STARTING_STACK_SIZE;
         };
@@ -30,7 +30,7 @@ class PointStack {
         };
         // copy constructor
         PointStack(PointStack & pstack) {
-            this->stack = new CPoint[pstack.size];
+            this->stack = new CPoint [pstack.size];
 
             for (int i = 0; i < pstack.top; i++) {
                 this->stack[i] = pstack.stack[i];
@@ -45,11 +45,11 @@ class PointStack {
                 increase_stack_size();
             }
 
-            for (int i = this->top; i > 0; i++) {
+            for (int i = this->top; i > 0; i--) {
                 this->stack[i] = this->stack[i-1];
             }
 
-            this->stack[0] = cpoint;
+            this->stack[0] = CPoint(cpoint.x, cpoint.x);
             this->top++;
 
             return *this;
@@ -59,29 +59,12 @@ class PointStack {
             this->top--;
             this->stack[this->top] = 0;
         };
-        // operator = PointStack
-        PointStack & operator = (const PointStack & pstack) {
-            CPoint * temp = new CPoint[pstack.size];
-
-            for (int i = 0; i < pstack.top; i++) {
-                this->stack[i] = pstack.stack[i];
-            }
-            
-            if (this->stack != nullptr)
-                delete[] this->stack;
-            this->stack = temp;
-
-            this->top = 0;
-            this->size = pstack.size;
-
-            return *this;
-        };
         // operator += CPoint
         PointStack & operator += (const CPoint & cpoint) {
             return this->push(cpoint);
         }
         // size getter
-        int getSize() {
+        int getSize() const {
             return this->top;
         }
         // operator []

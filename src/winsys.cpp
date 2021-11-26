@@ -3,9 +3,7 @@
 #include "screen.h"
 
 #include <list>
-#include <string>
-#include <ctype.h>
-#include <stdarg.h>
+#include <cctype>
 using namespace std;
 
 void CView::move(const CPoint & delta)
