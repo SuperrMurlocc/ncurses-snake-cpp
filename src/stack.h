@@ -45,7 +45,11 @@ class PointStack {
                 increase_stack_size();
             }
 
-            this->stack[this->top] = cpoint;
+            for (int i = this->top; i > 0; i++) {
+                this->stack[i] = this->stack[i-1];
+            }
+
+            this->stack[0] = cpoint;
             this->top++;
 
             return *this;
@@ -76,9 +80,16 @@ class PointStack {
         PointStack & operator += (const CPoint & cpoint) {
             return this->push(cpoint);
         }
-        // operator --
-        void operator -- () {
-            this->pop();
+        // size getter
+        int getSize() {
+            return this->top;
+        }
+        // operator []
+        CPoint & operator [] (int pos) const {
+            if (pos >= this->top)
+                throw range_error("");
+            else
+                return this->stack[pos];
         }
 };
 

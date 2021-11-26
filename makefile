@@ -21,7 +21,7 @@ $(OBJ)/screen.o: $(SRC)/screen.cpp $(SRC)/screen.h $(SRC)/cpoint.h
 $(OBJ)/winsys.o: $(SRC)/winsys.cpp $(SRC)/winsys.h $(SRC)/screen.h $(SRC)/cpoint.h
 	g++ -g -c -Wall -pedantic -std=c++11 $< -o $@
 
-$(OBJ)/snake.o: $(SRC)/snake.cpp $(SRC)/winsys.h $(SRC)/screen.h $(SRC)/cpoint.h $(SRC)/snake.h
+$(OBJ)/snake.o: $(SRC)/snake.cpp $(SRC)/winsys.h $(SRC)/screen.h $(SRC)/cpoint.h $(SRC)/snake.h $(SRC)/stack.h
 	g++ -g -c -Wall -pedantic -std=c++11 $< -o $@
 
 .PHONY: clean
