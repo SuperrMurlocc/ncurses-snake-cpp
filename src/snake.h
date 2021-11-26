@@ -1,6 +1,7 @@
 #ifndef __SNAKE_H__
 #define __SNAKE_H__
 
+#include "cpoint.h"
 #include "winsys.h"
 
 class CSnake:public CFramedWindow

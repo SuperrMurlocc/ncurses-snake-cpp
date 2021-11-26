@@ -2,7 +2,7 @@
 #include "screen.h"
 #include "cpoint.h"
 
-#define LINE_MAX 255
+#define LINES_MAX 255
 
 static CPoint TopLeft;
 static CPoint BottomRight;
@@ -79,8 +79,8 @@ int printl(const char* fmt, ...)
   va_list ap;
   va_start(ap, fmt);
 
-  char dest[LINE_MAX];
-  vsnprintf(dest, LINE_MAX, fmt, ap);
+  char dest[LINES_MAX];
+  vsnprintf(dest, LINES_MAX, fmt, ap);
 
   int i = 0;
   while(dest[i])
