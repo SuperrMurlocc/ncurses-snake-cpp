@@ -41,7 +41,7 @@ class PointStack {
         };
         // push
         PointStack & push(const CPoint & cpoint) {
-            if (this->top == this->size) {
+            if (++this->top == this->size) {
                 increase_stack_size();
             }
 
@@ -49,15 +49,16 @@ class PointStack {
                 this->stack[i] = this->stack[i-1];
             }
 
-            this->stack[0] = CPoint(cpoint.x, cpoint.x);
-            this->top++;
+            this->stack[0] = CPoint(cpoint.x, cpoint.y);
 
             return *this;
         };
         // pop
         void pop() {
+            if (!this->top)
+                return;
             this->top--;
-            this->stack[this->top] = 0;
+            this->stack[this->top] = CPoint(0,0);
         };
         // operator += CPoint
         PointStack & operator += (const CPoint & cpoint) {

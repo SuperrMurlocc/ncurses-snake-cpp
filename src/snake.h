@@ -22,30 +22,33 @@ enum direction_t {
 
 class CSnake : public CFramedWindow {
     private:
-        PointStack * SnakeBody;
+        PointStack * SnakeBody{};
         CPoint Head;
 
         enum direction_t new_direction;
         enum direction_t direction;
 
-        bool pause;
-        bool help;
-        bool death;
+        bool pause{};
+        bool help{};
+        bool death{};
 
-        int level;
-        int speed;
+        int level{};
+        int speed{};
         
         CPoint foodPoint;
     
         void generateStartingConditions() {
             help = true;
             pause = true;
+            death = false;
+            delete SnakeBody;
             SnakeBody = new PointStack;
             Head = CPoint(rand() % (geom.size.x - 5) + 5, rand() % (geom.size.y - 5) + 5);
             *SnakeBody += CPoint(Head.x - 1, Head.y);
             *SnakeBody += CPoint(Head.x - 2, Head.y);
             level = 1;
-            speed = 1000;
+            speed = 40;
+            direction = new_direction = RIGHT;
             makeFood();
             paint();
         }
@@ -58,6 +61,9 @@ class CSnake : public CFramedWindow {
                 rand_x = rand() % (geom.size.x - 2) + 1;
                 rand_y = rand() % (geom.size.y - 2) + 1;
                 canBePlaced = true;
+                if (Head == CPoint(rand_x, rand_y)) {
+                    canBePlaced = false;
+                }
                 for (int i = 0; i < (*SnakeBody).getSize(); i++) {
                     if ((*SnakeBody)[i] == CPoint(rand_x, rand_y)) {
                         canBePlaced = false;
@@ -138,6 +144,7 @@ class CSnake : public CFramedWindow {
             for (int i = 0; i < (*SnakeBody).getSize(); i++) {
                 if ((*SnakeBody)[i] == Head) {
                     death = true;
+                    paint_dead();
                     return false;
                 }
             }
@@ -157,15 +164,15 @@ class CSnake : public CFramedWindow {
             gotoyx(geom.topleft.y, geom.topleft.x);
             printl("LEVEL %d", level);
 
-            gotoyx(Head.y, Head.x);
+            gotoyx(geom.topleft.y + Head.y, geom.topleft.x + Head.x);
             printc(HEAD);
 
             for (int i = 0; i < (*SnakeBody).getSize(); i++) {
-                gotoyx((*SnakeBody)[i].y, (*SnakeBody)[i].x);
+                gotoyx(geom.topleft.y + (*SnakeBody)[i].y, geom.topleft.x + (*SnakeBody)[i].x);
                 printc(BODY);
             }
 
-            gotoyx(foodPoint.y, foodPoint.x);
+            gotoyx(geom.topleft.y + foodPoint.y, geom.topleft.x + foodPoint.x);
             printc(FOOD);
         }
 
@@ -197,13 +204,14 @@ class CSnake : public CFramedWindow {
         }
         
     public:
-        CSnake(CRect r, char _c = ' ') : CFramedWindow(r, _c) {
-            srand(time(NULL));
+        explicit CSnake(CRect r, char _c = ' ') : CFramedWindow(r, _c) {
+            srand(time(nullptr));
             generateStartingConditions();
         };
 
-        bool handleEvent(int key) {
+        bool handleEvent(int key) override {
             if (tolower(key) == 'p') {
+                paint_pause();
                 pause = !pause;
                 help = false;
             }
@@ -215,6 +223,7 @@ class CSnake : public CFramedWindow {
                     help = true;
                     pause = true;
                 }
+                paint_help();
             }
             if (tolower(key) == 'r') {
                 generateStartingConditions();
@@ -228,12 +237,16 @@ class CSnake : public CFramedWindow {
                     switch (key) {
                         case KEY_UP:
                             new_direction = UP;
+                            break;
                         case KEY_DOWN:
                             new_direction = DOWN;
+                            break;
                         case KEY_RIGHT:
                             new_direction = RIGHT;
+                            break;
                         case KEY_LEFT:
                             new_direction = LEFT;
+                            break;
                     }
                 }
                 return true;
@@ -243,7 +256,8 @@ class CSnake : public CFramedWindow {
         }
 
 
-        void paint() {
+        void paint() override {
+            CFramedWindow::paint();
             if (help) {
                 paint_help();               
             } else if (pause) {
