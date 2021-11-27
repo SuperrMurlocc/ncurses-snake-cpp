@@ -43,7 +43,7 @@ private:
         death = false;
         delete SnakeBody;
         SnakeBody = new PointStack;
-        Head = CPoint(rand() % (geom.size.x - 5) + 5, rand() % (geom.size.y - 5) + 5);
+        Head = CPoint(rand() % (geom.size.x - 5) + 2, rand() % (geom.size.y - 5) + 2);
         *SnakeBody += CPoint(Head.x - 1, Head.y);
         *SnakeBody += CPoint(Head.x - 2, Head.y);
         level = 1;
@@ -189,7 +189,7 @@ private:
     void paint_help() {
         int y = geom.topleft.y, x = geom.topleft.x;
         gotoyx(y + 2, x + 2);
-        printl("h - shows this message");
+        printl("h - pauses game and shows this message");
         gotoyx(y + 3, x + 2);
         printl("p - pause/play");
         gotoyx(y + 4, x + 2);
