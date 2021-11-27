@@ -1,4 +1,0 @@
-"/Users/jakubbednarski/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/212.5080.54/CLion.app/Contents/bin/cmake/mac/bin/cmake" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_DEPENDS_USE_COMPILER=FALSE -G "CodeBlocks - Unix Makefiles" /Users/jakubbednarski/Desktop/snake/src
--- Configuring done
--- Generating done
--- Build files have been written to: /Users/jakubbednarski/Desktop/snake/src/cmake-build-debug
