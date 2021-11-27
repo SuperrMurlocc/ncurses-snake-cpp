@@ -79,8 +79,8 @@ private:
         if (Head == foodPoint) {
             makeFood();
             level++;
-            if (speed > 2)
-                speed -= 2;
+            if (speed > 20)
+                speed -= 1;
             timeout(speed);
             return true;
         } else {
