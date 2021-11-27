@@ -269,6 +269,8 @@ public:
             paint_dead();
         } else {
             paint_regular();
+            if (death)
+                paint_dead();
         }
 
     }
