@@ -1,0 +1,3 @@
+/Users/jakubbednarski/Desktop/snake/src/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/jakubbednarski/Desktop/snake/src/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/jakubbednarski/Desktop/snake/src/cmake-build-debug/CMakeFiles/src.dir

@@ -21,254 +21,256 @@ enum direction_t {
 };
 
 class CSnake : public CFramedWindow {
-    private:
-        PointStack * SnakeBody{};
-        CPoint Head;
+private:
+    PointStack *SnakeBody;
+    CPoint Head;
 
-        enum direction_t new_direction;
-        enum direction_t direction;
+    enum direction_t new_direction;
+    enum direction_t direction;
 
-        bool pause{};
-        bool help{};
-        bool death{};
+    bool pause;
+    bool help;
+    bool death;
 
-        int level{};
-        int speed{};
-        
-        CPoint foodPoint;
-    
-        void generateStartingConditions() {
-            help = true;
-            pause = true;
-            death = false;
-            delete SnakeBody;
-            SnakeBody = new PointStack;
-            Head = CPoint(rand() % (geom.size.x - 5) + 5, rand() % (geom.size.y - 5) + 5);
-            *SnakeBody += CPoint(Head.x - 1, Head.y);
-            *SnakeBody += CPoint(Head.x - 2, Head.y);
-            level = 1;
-            speed = 40;
-            direction = new_direction = RIGHT;
-            makeFood();
-            paint();
-        }
+    int level;
+    int speed;
 
-        void makeFood() {
-            bool canBePlaced = false;
-            int rand_x;
-            int rand_y;
-            while (!canBePlaced) {
-                rand_x = rand() % (geom.size.x - 2) + 1;
-                rand_y = rand() % (geom.size.y - 2) + 1;
-                canBePlaced = true;
-                if (Head == CPoint(rand_x, rand_y)) {
+    CPoint foodPoint;
+
+    void generateStartingConditions() {
+        help = true;
+        pause = true;
+        death = false;
+        delete SnakeBody;
+        SnakeBody = new PointStack;
+        Head = CPoint(rand() % (geom.size.x - 5) + 5, rand() % (geom.size.y - 5) + 5);
+        *SnakeBody += CPoint(Head.x - 1, Head.y);
+        *SnakeBody += CPoint(Head.x - 2, Head.y);
+        level = 1;
+        speed = 50;
+        direction = new_direction = RIGHT;
+        makeFood();
+        paint();
+        timeout(speed);
+    }
+
+    void makeFood() {
+        bool canBePlaced = false;
+        int rand_x;
+        int rand_y;
+        while (!canBePlaced) {
+            rand_x = rand() % (geom.size.x - 2) + 1;
+            rand_y = rand() % (geom.size.y - 2) + 1;
+            canBePlaced = true;
+            if (Head == CPoint(rand_x, rand_y)) {
+                canBePlaced = false;
+            }
+            for (int i = 0; i < (*SnakeBody).getSize(); i++) {
+                if ((*SnakeBody)[i] == CPoint(rand_x, rand_y)) {
                     canBePlaced = false;
-                }
-                for (int i = 0; i < (*SnakeBody).getSize(); i++) {
-                    if ((*SnakeBody)[i] == CPoint(rand_x, rand_y)) {
-                        canBePlaced = false;
-                        break;
-                    }
+                    break;
                 }
             }
-            foodPoint = CPoint(rand_x, rand_y);
+        }
+        foodPoint = CPoint(rand_x, rand_y);
+    }
+
+    bool justAte() {
+        if (Head == foodPoint) {
+            makeFood();
+            level++;
+            if (speed > 2)
+                speed -= 2;
+            timeout(speed);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    bool move() {
+        if (help || pause)
+            return true;
+
+        switch (new_direction) {
+            case UP:
+                if (direction != DOWN) {
+                    direction = UP;
+                }
+                break;
+            case DOWN:
+                if (direction != UP) {
+                    direction = DOWN;
+                }
+                break;
+            case LEFT:
+                if (direction != RIGHT) {
+                    direction = LEFT;
+                }
+                break;
+            case RIGHT:
+                if (direction != LEFT) {
+                    direction = RIGHT;
+                }
+                break;
         }
 
-        bool justAte() {
-            if (Head == foodPoint) {
-                makeFood();
-                level++;
-                if (speed > 100)
-                    speed -= 50;
-                return true;
-            } else {
+        (*SnakeBody) += Head;
+
+        switch (direction) {
+            case UP:
+                Head += CPoint(0, -1);
+                break;
+            case DOWN:
+                Head += CPoint(0, 1);
+                break;
+            case LEFT:
+                Head += CPoint(-1, 0);
+                break;
+            case RIGHT:
+                Head += CPoint(1, 0);
+                break;
+        }
+
+        if (Head.x == 0) {
+            Head.x = geom.size.x - 2;
+        } else if (Head.x == geom.size.x - 1) {
+            Head.x = 1;
+        }
+        if (Head.y == 0) {
+            Head.y = geom.size.y - 2;
+        } else if (Head.y == geom.size.y - 1) {
+            Head.y = 1;
+        }
+
+        for (int i = 0; i < (*SnakeBody).getSize(); i++) {
+            if ((*SnakeBody)[i] == Head) {
+                death = true;
+                paint_dead();
                 return false;
             }
         }
 
-        bool move() {
-            if (help || pause)
-                return true;
+        if (!justAte()) {
+            (*SnakeBody).pop();
+        }
 
-            switch (new_direction) {
-                case UP:
-                    if (direction != DOWN) { 
-                        direction = UP;
-                    }
-                    break;
-                case DOWN:
-                    if (direction != UP) { 
-                        direction = DOWN;
-                    }
-                    break;
-                case LEFT:
-                    if (direction != RIGHT) { 
-                        direction = LEFT;
-                    }
-                    break;
-                case RIGHT:
-                    if (direction != LEFT) { 
-                        direction = RIGHT;
-                    }
-                    break;
+        return true;
+    }
+
+    void paint_regular() {
+        if (!move()) {
+            death = true;
+        }
+
+        gotoyx(geom.topleft.y, geom.topleft.x);
+        printl("LEVEL %d", level);
+
+        gotoyx(geom.topleft.y + Head.y, geom.topleft.x + Head.x);
+        printc(HEAD);
+
+        for (int i = 0; i < (*SnakeBody).getSize(); i++) {
+            gotoyx(geom.topleft.y + (*SnakeBody)[i].y, geom.topleft.x + (*SnakeBody)[i].x);
+            printc(BODY);
+        }
+
+        gotoyx(geom.topleft.y + foodPoint.y, geom.topleft.x + foodPoint.x);
+        printc(FOOD);
+    }
+
+    void paint_dead() {
+        gotoyx(geom.topleft.y + 2, geom.topleft.x + 2);
+        printl("You lost, you got to level %d.", level);
+        gotoyx(geom.topleft.y + 3, geom.topleft.x + 2);
+        printl("Press r to restart game.", level);
+    }
+
+    void paint_help() {
+        int y = geom.topleft.y, x = geom.topleft.x;
+        gotoyx(y + 2, x + 2);
+        printl("h - shows this message");
+        gotoyx(y + 3, x + 2);
+        printl("p - pause/play");
+        gotoyx(y + 4, x + 2);
+        printl("r - restart game");
+        gotoyx(y + 5, x + 2);
+        printl("q - quit");
+        gotoyx(y + 6, x + 2);
+        printl("arrows - move around");
+    }
+
+    void paint_pause() {
+        int y = geom.topleft.y, x = geom.topleft.x;
+        gotoyx(y + 2, x + 2);
+        printl("Game paused. Press p to unpause.");
+    }
+
+public:
+    explicit CSnake(CRect r, char _c = ' ') : CFramedWindow(r, _c) {
+        srand(time(nullptr));
+        generateStartingConditions();
+    };
+
+    bool handleEvent(int key) override {
+        if (tolower(key) == 'p') {
+            paint_pause();
+            pause = !pause;
+            help = false;
+        }
+        if (tolower(key) == 'h') {
+            if (help) {
+                help = false;
+                pause = false;
+            } else {
+                help = true;
+                pause = true;
             }
+            paint_help();
+        }
+        if (tolower(key) == 'r') {
+            generateStartingConditions();
+        }
+        if (key == '\t') {
+            pause = true;
+        }
 
-            (*SnakeBody) += Head;
-
-            switch (direction) {
-                case UP:
-                    Head += CPoint(0, -1);
-                    break;
-                case DOWN:
-                    Head += CPoint(0, 1);
-                    break;
-                case LEFT:
-                    Head += CPoint(-1, 0);
-                    break;
-                case RIGHT:
-                    Head += CPoint(1, 0);
-                    break;
-            }
-
-            if (Head.x == 0) {
-                Head.x = geom.size.x - 2;
-            } else if (Head.x == geom.size.x - 1) {
-                Head.x = 1;
-            }
-            if (Head.y == 0) {
-                Head.y = geom.size.y - 2;
-            } else if (Head.y == geom.size.y - 1) {
-                Head.y = 1;
-            }
-
-            for (int i = 0; i < (*SnakeBody).getSize(); i++) {
-                if ((*SnakeBody)[i] == Head) {
-                    death = true;
-                    paint_dead();
-                    return false;
+        if (!pause && !death) {
+            if (key == KEY_UP || key == KEY_DOWN || key == KEY_LEFT || key == KEY_RIGHT) {
+                switch (key) {
+                    case KEY_UP:
+                        new_direction = UP;
+                        break;
+                    case KEY_DOWN:
+                        new_direction = DOWN;
+                        break;
+                    case KEY_RIGHT:
+                        new_direction = RIGHT;
+                        break;
+                    case KEY_LEFT:
+                        new_direction = LEFT;
+                        break;
                 }
             }
-
-            if (!justAte()) {
-                (*SnakeBody).pop();
-            } 
-
             return true;
         }
 
-        void paint_regular() {
-            if (!move()) {
-                death = true;                
-            }
+        return CFramedWindow::handleEvent(key);
+    }
 
-            gotoyx(geom.topleft.y, geom.topleft.x);
-            printl("LEVEL %d", level);
 
-            gotoyx(geom.topleft.y + Head.y, geom.topleft.x + Head.x);
-            printc(HEAD);
-
-            for (int i = 0; i < (*SnakeBody).getSize(); i++) {
-                gotoyx(geom.topleft.y + (*SnakeBody)[i].y, geom.topleft.x + (*SnakeBody)[i].x);
-                printc(BODY);
-            }
-
-            gotoyx(geom.topleft.y + foodPoint.y, geom.topleft.x + foodPoint.x);
-            printc(FOOD);
+    void paint() override {
+        CFramedWindow::paint();
+        if (help) {
+            paint_help();
+        } else if (pause) {
+            paint_pause();
+        } else if (death) {
+            paint_dead();
+        } else {
+            paint_regular();
         }
 
-        void paint_dead() {
-            gotoyx(geom.topleft.y + 2, geom.topleft.x + 2);
-            printl("You lost, you got to level %d.", level);
-            gotoyx(geom.topleft.y + 3, geom.topleft.x + 2);
-            printl("Press r to restart game.", level);
-        }
-
-        void paint_help() {
-            int y = geom.topleft.y, x = geom.topleft.x;
-            gotoyx(y + 2, x + 2);
-            printl("h - shows this message");
-            gotoyx(y + 3, x + 2);
-            printl("p - pause/play");
-            gotoyx(y + 4, x + 2);
-            printl("r - restart game");
-            gotoyx(y + 5, x + 2);
-            printl("q - quit");
-            gotoyx(y + 6, x + 2);
-            printl("arrows - move around");
-        }
-
-        void paint_pause() {
-            int y = geom.topleft.y, x = geom.topleft.x;
-            gotoyx(y + 2, x + 2);
-            printl("Game paused. Press p to unpause.");
-        }
-        
-    public:
-        explicit CSnake(CRect r, char _c = ' ') : CFramedWindow(r, _c) {
-            srand(time(nullptr));
-            generateStartingConditions();
-        };
-
-        bool handleEvent(int key) override {
-            if (tolower(key) == 'p') {
-                paint_pause();
-                pause = !pause;
-                help = false;
-            }
-            if (tolower(key) == 'h') {
-                if (help) {
-                    help = false;
-                    pause = false;
-                } else {
-                    help = true;
-                    pause = true;
-                }
-                paint_help();
-            }
-            if (tolower(key) == 'r') {
-                generateStartingConditions();
-            }
-            if (key == '\t') {
-                pause = true;
-            }
-
-            if (!pause && !death) {
-                if (key == KEY_UP || key == KEY_DOWN || key == KEY_LEFT || key == KEY_RIGHT) {
-                    switch (key) {
-                        case KEY_UP:
-                            new_direction = UP;
-                            break;
-                        case KEY_DOWN:
-                            new_direction = DOWN;
-                            break;
-                        case KEY_RIGHT:
-                            new_direction = RIGHT;
-                            break;
-                        case KEY_LEFT:
-                            new_direction = LEFT;
-                            break;
-                    }
-                }
-                return true;
-            }
-
-            return CFramedWindow::handleEvent(key);
-        }
-
-
-        void paint() override {
-            CFramedWindow::paint();
-            if (help) {
-                paint_help();               
-            } else if (pause) {
-                paint_pause();
-            } else if (death) {
-                paint_dead();
-            } else {
-                paint_regular();
-            }
-    
-        }
+    }
 };
 
 #endif
