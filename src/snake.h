@@ -88,6 +88,7 @@ private:
         }
     }
 
+    using CFramedWindow::move;
     bool move() {
         if (help || pause)
             return true;
