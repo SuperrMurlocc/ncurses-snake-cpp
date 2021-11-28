@@ -217,12 +217,12 @@ public:
     };
 
     bool handleEvent(int key) override {
-        if (tolower(key) == 'p') {
+        if (tolower(key) == 'p' && !death) {
             paint_pause();
             pause = !pause;
             help = false;
         }
-        if (tolower(key) == 'h') {
+        if (tolower(key) == 'h' && !death) {
             if (help) {
                 help = false;
                 pause = false;
