@@ -8,9 +8,16 @@ static CPoint TopLeft;
 static CPoint BottomRight;
 static int cury, curx;
 
+void init_colors_for_terminal() {
+    start_color();
+    init_pair(COLOR_SNAKE, COLOR_GREEN, COLOR_BLACK);
+    init_pair(COLOR_FOOD, COLOR_RED, COLOR_BLACK);
+}
+
 void init_screen()
 {
   initscr();
+  init_colors_for_terminal();
   cbreak();
   noecho();
   timeout(20);

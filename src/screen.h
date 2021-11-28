@@ -3,9 +3,13 @@
 
 #include <ncurses.h>
 
+#define COLOR_SNAKE 1
+#define COLOR_FOOD 2
+
 void init_screen();
 void done_screen();
 void update_screen();
+void init_colors_for_terminal();
 
 int ngetch();
 

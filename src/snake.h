@@ -167,6 +167,7 @@ private:
         gotoyx(geom.topleft.y, geom.topleft.x);
         printl("LEVEL %d", level);
 
+        attron(COLOR_PAIR(COLOR_SNAKE));
         gotoyx(geom.topleft.y + Head.y, geom.topleft.x + Head.x);
         printc(HEAD);
 
@@ -174,9 +175,12 @@ private:
             gotoyx(geom.topleft.y + (*SnakeBody)[i].y, geom.topleft.x + (*SnakeBody)[i].x);
             printc(BODY);
         }
+        attroff(COLOR_PAIR(COLOR_SNAKE));
 
+        attron(COLOR_PAIR(COLOR_FOOD));
         gotoyx(geom.topleft.y + foodPoint.y, geom.topleft.x + foodPoint.x);
         printc(FOOD);
+        attroff(COLOR_PAIR(COLOR_FOOD));
     }
 
     void paint_dead() {
