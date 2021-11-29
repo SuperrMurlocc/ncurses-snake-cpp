@@ -1,7 +1,6 @@
 SRC=./src
 OBJ=./obj
-FLG=@/Users/jakubbednarski/.config/flags/flags_g++
-
+FLG=-g -Wall -Wextra -Wfloat-equal -Wundef -Wshadow -Wswitch-default -Wswitch-enum -Wunreachable-code -fno-elide-constructors -pedantic -std=c++11
 
 all: $(OBJ) winsys
 
