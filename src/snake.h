@@ -235,7 +235,7 @@ public:
         if (tolower(key) == 'r') {
             generateStartingConditions();
         }
-        if (key == '\t') {
+        if (key == '\t' && !pause && !death) {
             pause = true;
         }
 
