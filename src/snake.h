@@ -34,6 +34,7 @@ private:
 
     int level;
     int speed;
+    int speed_counter;
 
     CPoint foodPoint;
 
@@ -47,11 +48,11 @@ private:
         *SnakeBody += CPoint(Head.x - 1, Head.y);
         *SnakeBody += CPoint(Head.x - 2, Head.y);
         level = 1;
-        speed = 50;
+        speed = 5;
+        speed_counter = 0;
         direction = new_direction = RIGHT;
         makeFood();
         paint();
-        timeout(speed);
     }
 
     void makeFood() {
@@ -79,9 +80,8 @@ private:
         if (Head == foodPoint) {
             makeFood();
             level++;
-            if (speed > 20)
-                speed -= 1;
-            timeout(speed);
+            if (!((level + 1) % 5) && speed > 1)
+                speed--;
             return true;
         } else {
             return false;
@@ -160,8 +160,11 @@ private:
     }
 
     void paint_regular() {
-        if (!move()) {
-            death = true;
+        speed_counter++;
+        if (!(speed_counter % speed)) {
+            if (!move()) {
+                death = true;
+            }
         }
 
         gotoyx(geom.topleft.y, geom.topleft.x);
