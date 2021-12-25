@@ -22,7 +22,7 @@ $(OBJ)/screen.o: $(SRC)/screen.cpp $(SRC)/screen.h $(SRC)/cpoint.h
 $(OBJ)/winsys.o: $(SRC)/winsys.cpp $(SRC)/winsys.h $(SRC)/screen.h $(SRC)/cpoint.h
 	g++ -g -c $(FLG) $< -o $@
 
-$(OBJ)/snake.o: $(SRC)/snake.cpp $(SRC)/winsys.h $(SRC)/screen.h $(SRC)/cpoint.h $(SRC)/snake.h $(SRC)/stack.h
+$(OBJ)/snake.o: $(SRC)/winsys.h $(SRC)/screen.h $(SRC)/cpoint.h $(SRC)/snake.h $(SRC)/stack.h
 	g++ -g -c $(FLG) $< -o $@
 
 .PHONY: clean
