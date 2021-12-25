@@ -9,3 +9,4 @@ In order to clean .o files simply run:
 ```sh
 make clean
 ```
+![pic1](https://github.com/SuperrMurlocc/ncurses-snake-cpp/blob/master/pics/pic1.jpg)
